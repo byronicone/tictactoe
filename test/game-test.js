@@ -8,17 +8,19 @@ describe('tic tac toe game', () => {
   })
   it('enforces default size for invalid input', () => {
     let myGame = game.load(-1);
-    assert.equal(myGame.size, 3);
+    checkGameProperties(myGame, 3);
   })
    it('loads a large game with size of 5', () => {
     let myGame = game.load(5);
-    assert.equal(myGame.size, 5);
+    checkGameProperties(myGame, 5);
    })
 })
 
 checkGameProperties = (myGame, size) => {
     assert.equal(myGame.size, size);
-    assert.deepEqual(myGame.playerSymbols, {'player1': 'X', 'player2': 'Y'});
+    assert.deepEqual(myGame.playerData,
+      [{'num': 1, 'symbol': 'X', 'spacesTaken': []},
+      {'num': 2, 'symbol': 'Y', 'spacesTaken': []}]);
     checkBoardLabels(myGame);
 }
 
