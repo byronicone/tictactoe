@@ -1,10 +1,5 @@
 var game = {};
 
-var HORIZONTAL = 1;
-var VERTICAL =  2;
-var FORWARD_DIAG = 3;
-var BACKWARD_DIAG = 2;
-
 var DEFAULT_SIZE = 3;
 
 
@@ -38,7 +33,7 @@ loadPlayers = function(symbols){
   for(let i = 0; i<symbols.length; i++){
     players.push({'num': i+1,
       'symbol': symbols[i],
-      'spacesTaken': []});
+      'cellsTaken': []});
   }
 
   return players;

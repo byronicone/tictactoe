@@ -19,8 +19,8 @@ describe('tic tac toe game', () => {
 checkGameProperties = (myGame, size) => {
     assert.equal(myGame.size, size);
     assert.deepEqual(myGame.playerData,
-      [{'num': 1, 'symbol': 'X', 'spacesTaken': []},
-      {'num': 2, 'symbol': 'Y', 'spacesTaken': []}]);
+      [{'num': 1, 'symbol': 'X', 'cellsTaken': []},
+      {'num': 2, 'symbol': 'Y', 'cellsTaken': []}]);
     checkBoardLabels(myGame);
 }
 

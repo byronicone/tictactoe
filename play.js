@@ -1,5 +1,18 @@
 var play = {};
 
+//Victory set diffs for default size.
+//Example:  1, 2, 3 all have a diff of 1
+//1, 5, 9 all have a diff of 4.
+
+var HORIZONTAL = 1;
+var VERTICAL =  3;
+var FORWARD_DIAG = 4;
+var BACKWARD_DIAG = 2;
+
+var victoryDiffs = new Set([HORIZONTAL, BACKWARD_DIAG, VERTICAL, FORWARD_DIAG]);
+
+var DIFFS_REQUIRED = 2;
+
 play.printBoard =function(game){
 
   let boardSize = getBoardSize(game);
@@ -25,8 +38,13 @@ play.takeTurn = function(game,num){
   let boardSize = game.size;
   let coordinates = getCoordinatesFromCellNumber(game.size,num);
   let player = getCurrentPlayer(game);
-  game.board[coordinates[0]][coordinates[1]] = player.symbol;
-  player.spacesTaken.push(num);
+
+  let rowNumber = coordinates[0];
+  let colNumber = coordinates[1];
+
+  game.board[rowNumber][colNumber] = player.symbol;
+  player.cellsTaken.push({'num':num, 'rowNumber':rowNumber, 'colNumber': colNumber});
+  game.turn++;
 }
 
 getCurrentPlayer = function(game){
@@ -41,30 +59,123 @@ getCoordinatesFromCellNumber = function(boardSize, cellNumber){
   return [rowNumber, columnNumber];
 }
 
-checkForVictory = function(game){
-  //Horizontal victory = diff of 1.
-  //Vertical victory = diff of board size
-  //First diagonal victory =  diff of board size + 1;
-  //second diagonal victory = diff of board size - 1;
-  //check player 1's set.
-    //if victorious, return.
-  //check player 2's set.
-    //if victorious, return.
+setVictoryDiffs = function(boardSize){
+  VERTICAL =  boardSize;
+  FORWARD_DIAG = boardSize+1;
+  BACKWARD_DIAG = boardSize-1;
+  DIFFS_REQUIRED = boardSize-1;
 }
 
-checkPlayerSetForVictory = function(playerSet){
-  //isVictory = false, by default
-  //For each number
-    //get the diff array with each other potential victory chain number
-    //if the diff array contains size-1 items for any diff amount
-      //get the potential victory type (horizontal, vertical, forward diagonal, reverse diagonal)
-      //validate the rows and columns for the specified victory type
-      //if valid, isVictory = true
-  //return isVictory
+play.checkForPlayerVictory = function(player){
+  sortPlayerCells(player);
+  victorySet = checkPlayerSetForVictory(player.cellsTaken);
+  return victorySet;
 }
 
-// getDiffsInPlayerSet = function(
-//
+sortPlayerCells = function(player){
+  player.cellsTaken = player.cellsTaken.sort( (a,b) => {return a.num-b.num});
+}
+
+checkPlayerSetForVictory = function(cellsTaken){
+
+  for(let i = 0; i < cellsTaken.length-2; i++){
+     cellsTaken = cellsTaken.splice(i);
+     let potentialWinners = getPotentialWinners(cellsTaken);
+     if(potentialWinners.length > 0){
+       return potentialWinners;
+     }
+
+  }
+  return [];
+
+}
+
+getPotentialWinners = function(cellsTaken){
+
+    let potentialWinners = [];
+
+    potentialWinners.push(cellsTaken[0]);
+
+    let currentDiff = 0;
+
+    for(let j = 1; j < cellsTaken.length; j++){
+
+      let nextCell = cellsTaken[j];
+      let thisCell = cellsTaken[j-1];
+
+      let thisDiff = nextCell.num - thisCell.num;
+      if(currentDiff == 0){ currentDiff = thisDiff }
+
+      if(victoryDiffs.has(thisDiff) && thisDiff >= currentDiff){
+        if(thisDiff > currentDiff){
+          potentialWinners.pop();
+        }
+
+        potentialWinners.push(nextCell);
+
+        currentDiff = thisDiff;
+      }
+
+      if(DIFFS_REQUIRED==potentialWinners.length - 1){
+        if(validateWinners(currentDiff,potentialWinners)){
+          return potentialWinners;
+        }
+      }
+    }
+
+    return [];
+}
+
+validateWinners = function(victoryType, potentialWinners){
+  switch (victoryType){
+    case HORIZONTAL:
+      return areInSameRow(potentialWinners);
+    case BACKWARD_DIAG:
+      return areInBackwardDiag(potentialWinners);
+    case VERTICAL:
+      return areInSameColumn(potentialWinners);
+    case FORWARD_DIAG:
+      return areInForwardDiag(potentialWinners);
+    default:
+      return false;
+  }
+}
+
+areInSameRow = function(cells){
+  for(let i = 1; i<cells.length; i++){
+    if(cells[i-1].rowNumber != cells[i].rowNumber){
+      return false;
+    }
+  }
+  return true;
+}
+
+areInSameColumn = function(cells){
+  for(let i = 1; i<cells.length; i++){
+    if(cells[i-1].colNumber != cells[i].colNumber){
+      return false;
+    }
+  }
+  return true;
+}
+
+areInBackwardDiag = function(cells){
+  for(let i = 1; i<cells.length; i++){
+    if(cells[i-1].colNumber != cells[i].colNumber+1){
+      return false;
+    }
+  }
+  return true;
+}
+
+areInForwardDiag = function(cells){
+  for(let i = 1; i<cells.length; i++){
+    if(cells[i-1].colNumber != cells[i].colNumber-1){
+      return false;
+    }
+  }
+  return true;
+}
 
 for(prop in play) {
    if(play.hasOwnProperty(prop)) {
