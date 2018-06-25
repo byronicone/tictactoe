@@ -20,7 +20,7 @@ checkGameProperties = (myGame, size) => {
     assert.equal(myGame.size, size);
     assert.deepEqual(myGame.playerData,
       [{'num': 1, 'symbol': 'X', 'cellsTaken': []},
-      {'num': 2, 'symbol': 'Y', 'cellsTaken': []}]);
+      {'num': 2, 'symbol': 'O', 'cellsTaken': []}]);
     checkBoardLabels(myGame);
 }
 

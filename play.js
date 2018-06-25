@@ -15,20 +15,17 @@ var DIFFS_REQUIRED = 2;
 
 play.printBoard =function(game){
 
-  let boardSize = getBoardSize(game);
-  let rowDivider = '_______';
+  let boardSize = game.size;
 
   for(let rowNumber=0; rowNumber<boardSize; rowNumber++){
-
-    let rowPrintout = `${rowDivider}+\n`;
-
+    let rowPrintout = '';
     for(let colNumber=0; colNumber<boardSize; colNumber++){
-      rowPrintout += `| ${game.board[x][y]} `;
+      rowPrintout += `| ${game.board[rowNumber][colNumber]} `;
     }
 
-    rowPrintout += `|\n${rowDivider}\n`;
+    rowPrintout += `|\n`;
 
-    console.log(row);
+    console.log(rowPrintout);
 
   }
 
@@ -44,7 +41,11 @@ play.takeTurn = function(game,num){
 
   game.board[rowNumber][colNumber] = player.symbol;
   player.cellsTaken.push({'num':num, 'rowNumber':rowNumber, 'colNumber': colNumber});
+  let victoryCells = play.checkForPlayerVictory(player);
   game.turn++;
+  if(victoryCells.length>0){
+    return victoryCells;
+  }
 }
 
 getCurrentPlayer = function(game){

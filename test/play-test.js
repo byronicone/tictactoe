@@ -20,7 +20,7 @@ describe('board operations', () => {
     myGame.turn = 2;
     play.takeTurn(myGame,5);
     assert.equal(myGame.playerData[1].cellsTaken[0].num, 5);
-    assert.equal(myGame.board[1][1], 'Y');
+    assert.equal(myGame.board[1][1], 'O');
   })
 
 })

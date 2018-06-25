@@ -27,7 +27,7 @@ loadPlayers = function(symbols){
   let players = [];
 
   if(!symbols){
-    symbols = ['X','Y'];
+    symbols = ['X','O'];
   }
 
   for(let i = 0; i<symbols.length; i++){
